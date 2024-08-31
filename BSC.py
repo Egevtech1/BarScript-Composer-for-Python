@@ -2,7 +2,7 @@ import json, sys, os
 from colorama import Fore, init
 
 init(autoreset=True)
-
+print('BarScript Composer for Python: ver.:0.0.1.1')
 args = []
 j = sys.argv
 for i in range(1, len(j)):
@@ -30,22 +30,24 @@ for i in range(0, len(args)):
             print(Fore.RED + 'Что-то пошло не так')
             sys.exit()
         continue
-
+print(F'{Fore.YELLOW}[--]{Fore.WHITE}Открытие файла')
 if os.path.exists(fileToRun) == False:
-    print(Fore.RED + "Файл не существует")
+    print(F'{Fore.RED}[ER]{Fore.WHITE}Открытие файла: файл не найден')
     sys.exit()
 
 with open(fileToRun, 'r') as file:
     data = json.loads(file.read())
 
 if data['Header']['fileType'] != 'brslf':
-    print(Fore.RED + 'Возможно, это не файл формата brs')
+    print(F'{Fore.RED}[ER]{Fore.WHITE}Открытие файла: файл не формата brs')
     sys.exit()
 
+print(F'{Fore.GREEN}[ОК]{Fore.WHITE}Открытие файла')
 sectionCode = data['Code']
 pythonScript = []
 vars = {}
 
+print(F'{Fore.YELLOW}[--]{Fore.WHITE}Компоновка скетча')
 for code in sectionCode:
     nameOf=code['name']
     typeOf=code['type']
@@ -54,7 +56,7 @@ for code in sectionCode:
 
     length = len(sectionCode)
     where = sectionCode.index(code) + 1
-    print(Fore.GREEN+'Компиляция скетча'+Fore.WHITE + F' Завершено: {where/length*100}%')
+    print(F'{Fore.GREEN}[{int(where/length*100)}%]{Fore.WHITE}Компоновка скетча')
 
     if nameOf=='print' and typeOf=='function':
         out = []
@@ -65,7 +67,7 @@ for code in sectionCode:
             elif i['type'] in ['*boolean', '*string']:
                 out.append(vars[i['data']])
             else:
-                print(Fore.RED+'Неизвестный тип данных:' + Fore.WHITE + F' "{i['type']}"')
+                print(F'{Fore.RED}[ERR]{Fore.White} Компоновка скетча: неизвестный тип данных:' + Fore.WHITE + F' "{i['type']}"')
                 sys.exit()
 
         outScript = ['print("', ''.join(out), '")']
@@ -73,6 +75,13 @@ for code in sectionCode:
     if typeOf in ['string', 'boolean']:
         vars[nameOf] = data
 
-fileWrited = open(fileToWrite, 'w')
+print(F'{Fore.GREEN}[ОК]{Fore.WHITE}Компоновка скетча')
+print(F'{Fore.YELLOW}[--]{Fore.WHITE}Запись')
 
-fileWrited.write('\n'.join(pythonScript))
+try:
+    fileWrited = open(fileToWrite, 'w')
+
+    fileWrited.write('\n'.join(pythonScript))
+    print(F'{Fore.GREEN}[ОК]{Fore.WHITE}Запись')
+except:
+    print(F'{Fore.RED}[ER]{Fore.WHITE}Запись')
