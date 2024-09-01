@@ -49,31 +49,34 @@ vars = {}
 
 print(F'{Fore.YELLOW}[--]{Fore.WHITE}Компоновка скетча')
 for code in sectionCode:
-    nameOf=code['name']
-    typeOf=code['type']
-    metadata=code['metadata']
-    data=code['data']
+    try:
+        nameOf=code['name']
+        typeOf=code['type']
+        metadata=code['metadata']
+        data=code['data']
 
-    length = len(sectionCode)
-    where = sectionCode.index(code) + 1
-    print(F'{Fore.GREEN}[{int(where/length*100)}%]{Fore.WHITE}Компоновка скетча')
+        length = len(sectionCode)
+        where = sectionCode.index(code) + 1
+        print(F'{Fore.GREEN}[{int(where/length*100)}%]{Fore.WHITE}Компоновка скетча')
 
-    if nameOf=='print' and typeOf=='function':
-        out = []
-        for i in data:
+        if nameOf=='print' and typeOf=='function':
+            out = []
+            for i in data:
 
-            if i['type'] in ['string', 'boolean']:
-                out.append(i['data'])
-            elif i['type'] in ['*boolean', '*string']:
-                out.append(vars[i['data']])
-            else:
-                print(F'{Fore.RED}[ERR]{Fore.White} Компоновка скетча: неизвестный тип данных:' + Fore.WHITE + F' "{i['type']}"')
-                sys.exit()
+                if i['type'] in ['string', 'boolean']:
+                    out.append(i['data'])
+                elif i['type'] in ['*boolean', '*string']:
+                    out.append(vars[i['data']])
+                else:
+                    print(F'{Fore.RED}[ERR]{Fore.White} Компоновка скетча: неизвестный тип данных:' + Fore.WHITE + F' "{i['type']}"')
+                    sys.exit()
 
-        outScript = ['print("', ''.join(out), '")']
-        pythonScript.append(''.join(outScript))
-    if typeOf in ['string', 'boolean']:
-        vars[nameOf] = data
+            outScript = ['print("', ''.join(out), '")']
+            pythonScript.append(''.join(outScript))
+        if typeOf in ['string', 'boolean']:
+            vars[nameOf] = data
+    except:
+        print(F'{Fore.RED}[ERR]{Fore.WHITE}Компоновка скетча: ошибка LexCode')
 
 print(F'{Fore.GREEN}[ОК]{Fore.WHITE}Компоновка скетча')
 print(F'{Fore.YELLOW}[--]{Fore.WHITE}Запись')
